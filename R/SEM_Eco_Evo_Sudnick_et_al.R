@@ -1,8 +1,9 @@
 ###############################################################
-#  Sudnick, Brodie & Williams 
-#manuscript ECE-2021-05-00859 entitled "Nature versus nurture: Structural equation modeling indicates that parental care does not mitigate consequences of poor environmental conditions" 
-# Code for Structural equation modeling (SEM) 
+#  Sudnick, Brodie & Williams
+#manuscript ECE-2021-05-00859 entitled "Nature versus nurture: Structural equation modeling indicates that parental care does not mitigate consequences of poor environmental conditions"
+# Code for Structural equation modeling (SEM)
 #  Author: Kelly A. Williams (KAW)
+# test
 ###############################################################
 
 # Packages needed
@@ -22,10 +23,10 @@ library(car)
 ##############################################################
 #this needs fixed - use relative paths
 
-#K laptop 
+#K laptop
 
 
-#setwd("C:/Dropbox/kelly's shared files/Student Folders/Maddie/Thesis analysis") 
+#setwd("C:/Dropbox/kelly's shared files/Student Folders/Maddie/Thesis analysis")
 full <- read_csv("Data Files/full.csv")
 names(full)
 View(full)
@@ -55,28 +56,28 @@ levels(factor(full$Species.J))
 by.nestling<-full%>%group_by(Nestl.ID) # group data set by nestling ID. multiple observations per nestling
 #need one row of data per nestling. First get mean values for the following variables
 nestling<-by.nestling%>%
-  summarize_at(c("Vol.2","mass.A","Total.Trip.min", "T.perc","nestling.temp"), mean, na.rm=TRUE) 
+  summarize_at(c("Vol.2","mass.A","Total.Trip.min", "T.perc","nestling.temp"), mean, na.rm=TRUE)
 
 # check and compare the two data frames
 head(nestling)
 head(by.nestling)
 
-#additional checks 
+#additional checks
 nestling[15,] # check data for the 15th row
 a.15<-subset(full, Nestl.ID=="160188558")
 a.15$Vol.1
 a.15$mass.A
 a.15$Total.Trip.min # done checking
 
-# use the following function to pull out 1 value per nestling for bf,k, hem. input 1 nestling ID. 
-nest.calc = function(nestl){ 
-  val<-by.nestling%>%filter(Nestl.ID == nestl)%>% # filter by nestling by.nestling data 
+# use the following function to pull out 1 value per nestling for bf,k, hem. input 1 nestling ID.
+nest.calc = function(nestl){
+  val<-by.nestling%>%filter(Nestl.ID == nestl)%>% # filter by nestling by.nestling data
     select(Nestl.ID,bf,K,Hem,Nest.ID, Nestling.Max, Species.J, Vol.2)
   bf.k.hem<-data.frame("Nestl.ID"=val[1,1], "bf"=val[1,2],"K"=val[1,3],"Hem"=val[1,4],"Nest.ID"=val[1,5], "Nestling.Max"=val[1,6], "Species.J"=val[1,7], "Vol.2"=val[1,8]) # only keep 1 value
 }
 
-list.bf.k.hem<-lapply(nestling$Nestl.ID, nest.calc) #apply function to get list of data frames This will take a minute. 
-bf.k.hem<-bind_rows(list.bf.k.hem) # merge list of data frames 
+list.bf.k.hem<-lapply(nestling$Nestl.ID, nest.calc) #apply function to get list of data frames This will take a minute.
+bf.k.hem<-bind_rows(list.bf.k.hem) # merge list of data frames
 nestling<-cbind(nestling, bf.k.hem) # new data with 348 obs 22 variables
 head(nestling)
 
@@ -89,13 +90,13 @@ levels(factor(nestling$Species))
 
 EABL<-subset(nestling, Species=="EABL") #235 obs of 23 vars variables
 levels(factor(EABL$Species))
-#some checks: 
+#some checks:
 names(EABL)
 head(EABL)
 EABL$bf
 str(EABL)
 
-#rename variables 
+#rename variables
 Food<-as.numeric(EABL$Vol.2) # Vol.2 is volume of arthropods 1-10mm
 bf<-EABL$bf
 Temp<-as.numeric(EABL$nestling.temp)
@@ -126,7 +127,7 @@ table(is.na(dat$Biomass)) #26 missing biomass so n = 209
 dat1<-na.omit(dat) #146 obs. if pull na from growth and hem, n = 136 if biomass, 148 with biomass exclude Hem
 head(dat1)
 str(dat1) #
-plot(dat1) # 
+plot(dat1) #
 names(dat1)
 str(dat1)
 which(is.na(dat1)) # check
@@ -136,7 +137,7 @@ cov(dat1[,c(1,2,3,4,5)]) # covariance
 
 
 #### K (growth) data with biomass####
-k<-dat[,1:9] # exclude Hem Gives n = 235 
+k<-dat[,1:9] # exclude Hem Gives n = 235
 head(dat)
 head(k)
 k.dat<-na.omit(k) #n = 149
@@ -171,7 +172,7 @@ fit.psem<-psem(
   lme(Temp~Food+Biomass+bf, random = ~1|Nest.ID, data=k.dat)
   )
 
-summary(fit.psem) #AIC = 98.95, Cp=0, df=6. need to add Att~Prov, Temp~ Prov   
+summary(fit.psem) #AIC = 98.95, Cp=0, df=6. need to add Att~Prov, Temp~ Prov
 fisherC(fit.psem)
 
 fit.psem1<-psem(
@@ -185,7 +186,7 @@ fit.psem1<-psem(
   Prov%~~%Brood,
   Food%~~%Biomass
   )
-  
+
 summary(fit.psem1) # AIC= 56.24, p=0.33 DF = 2 Fisher C= 2.244 p = 0.326, 2 df. Food not sig with growth but is with temp
 fisherC(fit.psem1)
 plot(fit.psem1, node_attrs = list(shape="rectangle",color="black", show="std", x = 4), ns_dashed=TRUE, alpha=0.05)
@@ -202,7 +203,7 @@ fit.psem1.1<-psem(
   Food%~~%Biomass
 )
 
-summary(fit.psem1.1) #  aic = 61.15, Fisher's C = 7.152 p = .13, df = 4 
+summary(fit.psem1.1) #  aic = 61.15, Fisher's C = 7.152 p = .13, df = 4
 fisherC(fit.psem1.1)
 
 
@@ -232,11 +233,11 @@ fit.psem3<-psem(
   Prov%~~%Brood,
   Food%~~%Biomass
 )
-summary(fit.psem3) #AIc = 55.93, C = 3.93, p = .42, df = 4 
+summary(fit.psem3) #AIc = 55.93, C = 3.93, p = .42, df = 4
 fisherC(fit.psem3)
 plot(fit.psem3, node_attrs = list(shape="rectangle",color="black", show="std", x = 4), ns_dashed=TRUE, alpha=0.05)
 
-# remove att~bf 
+# remove att~bf
 fit.psem4<-psem(
   lme(Growth~bf +Biomass+ Prov+Att +Temp, random = ~1|Nest.ID, data=k.dat),
   lme(Prov~Food+Biomass+bf, random = ~1|Nest.ID, data=k.dat),
@@ -248,7 +249,7 @@ fit.psem4<-psem(
   Prov%~~%Brood,
   Food%~~%Biomass
 )
-summary(fit.psem4) #Aic 54.84, C = 4.84 p = .56, df = 6  (no change when Growth%~~%Brood so left out)  
+summary(fit.psem4) #Aic 54.84, C = 4.84 p = .56, df = 6  (no change when Growth%~~%Brood so left out)
 fisherC(fit.psem4)
 # look at paths
 plot(fit.psem4, node_attrs = list(shape="rectangle",color="black", show="std", x = 4), ns_dashed=TRUE, alpha=0.05)
@@ -321,7 +322,7 @@ fit.psem4.2.2<-psem(
   Att%~~%Prov,
   Prov%~~%Brood
 )
-summary(fit.psem4.2.2) # aic 50.72 fit C = 8.72 p = .19 df = 6; directed sep test sGrowthay I need growth ~ biomass, 
+summary(fit.psem4.2.2) # aic 50.72 fit C = 8.72 p = .19 df = 6; directed sep test sGrowthay I need growth ~ biomass,
 fisherC(fit.psem4.2.2)
 
 # remove growth~Att
@@ -371,7 +372,7 @@ summary(fit.kpsem1) #AIC = 44.23, fit C = 0.24 p = 0.9, df = 2
 
 
 
-#remove att & growth, 
+#remove att & growth,
 fit.kpsem2<-psem(
   lme(Growth~bf +Food+ Prov+Temp, random = ~1|Nest.ID, data=k.food.dat),
   lme(Prov~Food, random = ~1|Nest.ID, data=k.food.dat),
@@ -386,7 +387,7 @@ fit.kpsem2<-psem(
 )
 summary(fit.kpsem2) #AIC = 42.87, fit C= 0.87, p = 0.93 df = 4
 
-#remove growth~brood, 
+#remove growth~brood,
 #### "best" model with food instead of biomass####
 k.food.dat$bf.f<-factor(k.food.dat$bf) #. Prov still neg. dont use bf as numeric
 fit.kpsem3<-psem(
@@ -638,4 +639,4 @@ fit.k.tres.psem4<-psem(
 summary(fit.k.tres.psem4) # aic 17.4, fit = 0.486, df=2
 plot(fit.k.tres.psem4, node_attrs = list(shape="rectangle",color="black", show="std", x = 4), ns_dashed=TRUE, alpha=0.05)
 
-tres.dat$bf # all 1. 
+tres.dat$bf # all 1.
