@@ -20,13 +20,20 @@ library(lme4)
 library(nlme)
 library(car)
 ##############################################################
+<<<<<<< HEAD
 #set working directory to SemEcoTutorial folder if needed
 setwd("C:/Dropbox/Documents/Rpackages/SemEcoTutorial")
+=======
+>>>>>>> 1ceb43fe56925d3360bee12fd368aca7676bd843
 
 # load data
 
 full <- read_csv("data/full.csv")
+<<<<<<< HEAD
 full<-read_csv("data/data.csv")
+=======
+
+>>>>>>> 1ceb43fe56925d3360bee12fd368aca7676bd843
 
 #### data prep ####
 
@@ -67,7 +74,11 @@ nest.calc = function(nestl){
 
 list.bf.k.hem<-lapply(nestling$Nestl.ID, nest.calc) #apply function to get list of data frames
 #The above will take a minute.
+<<<<<<< HEAD
 bf.k.hem<-bind_rows(list.bf.k.hem) # merge list of data frames --> n = 348 with tres
+=======
+bf.k.hem<-bind_rows(list.bf.k.hem) # merge list of data frames --> n = 348
+>>>>>>> 1ceb43fe56925d3360bee12fd368aca7676bd843
 head(bf.k.hem)
 nestling1<-cbind(nestling, bf.k.hem) # data set with one row per nestling with 14 variables
 
